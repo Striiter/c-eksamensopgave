@@ -18,18 +18,25 @@ char toLowerAZ(char ch)                             // modtager ét tegn
 }
 
 //--------------------------------------------------------------
+//  Dette er nok ift. eksamensopgaven, at forklare
 //  HJÆLPEFUNKTION:  printFrequencies
 //  Formål : Udskrive alfabetisk tabel for alle bogstaver, der
 //           forekommer mindst én gang.
+//
+//  Hvad er en loop/løkke? “Gentag dette sæt instruktioner, så længe noget er sandt.”
+//  Eksempler:
+//  For            - 	Du kender præcis hvor mange gange (eller har et klart indeks).
+//  While          - 	Gentag så længe noget er sandt (antal iterationer ukendt på forhånd).
+//  do ... while   -  Skal altid køre mindst én gang, derefter teste.
 //--------------------------------------------------------------
 void printFrequencies(const int freq[26])           // const → funktionen ændrer IKKE arrayet
 {
     std::cout << "\nBogstav  Antal\n";              // kolonne-overskrift
-    for (int i = 0; i < 26; ++i)                    // loop a(0)…z(25)
-    {
+    for (int i = 0; i < 26; ++i)                    // loop a(0)…z(25)           for (int i = 1; i <= 5; ++i) = init i til 5, betegn i, derefter øg "step" med 1 (++i) 
+    {                                               //                           i++ = øg i med én - dvs dette eksempel starter med 1, øges med ét step op til 5
         if (freq[i] > 0)                            // spring 0-forekomster over
         {
-            char bogstav = static_cast<char>('a' + i); // i→bogstav
+            char bogstav = static_cast<char>('a' + i); // i→bogstav                - Dette laver i om til bogstaver
             std::cout << bogstav << "        "      // juster mellemrum selv
                       << freq[i] << '\n';           // udskriv optælling
         }
