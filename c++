@@ -1,76 +1,79 @@
-#include <iostream>     // std::cout, std::cin
-#include <string>       // std::string, std::getline
+/****************************************************************
+  Bogstav-analyse — ultra-kommenteret (”pege-forklaring” til eksamen)
+****************************************************************/
 
-/*************************************************************
- *  Hjælpefunktioner
- *************************************************************/
+#include <iostream>   // cout/cin – al skærm-/tastatur-I-O
+#include <string>     // std::string + std::getline til at læse hele linjer
 
-// Gør ét tegn til lille bogstav hvis det er A-Z
-char toLowerAZ(char ch)
+//--------------------------------------------------------------
+//  HJÆLPEFUNKTION:  toLowerAZ
+//  Formål : Konverter ét tegn fra A-Z → a-z (ASCII +32); andre
+//           tegn returneres uændret.
+//--------------------------------------------------------------
+char toLowerAZ(char ch)                             // modtager ét tegn
 {
-    if (ch >= 'A' && ch <= 'Z')            // store ASCII-bogstaver
-        return ch + ('a' - 'A');           // flyt 32 ned i tabellen
-    return ch;                             // ellers uændret
+    if (ch >= 'A' && ch <= 'Z')                     // er det stort bogstav?
+        return ch + ('a' - 'A');                   // ja ⇒ flyt 32 ned (65→97)
+    return ch;                                      // nej ⇒ send tilbage som det er
 }
 
-// Udskriv alfabetisk frekvensliste
-void printFrequencies(const int frekvens[26])
+//--------------------------------------------------------------
+//  HJÆLPEFUNKTION:  printFrequencies
+//  Formål : Udskrive alfabetisk tabel for alle bogstaver, der
+//           forekommer mindst én gang.
+//--------------------------------------------------------------
+void printFrequencies(const int freq[26])           // const → funktionen ændrer IKKE arrayet
 {
-    std::cout << "\n­­­­Bogstav  Antal\n";
-    for (int i = 0; i < 26; ++i)
-        if (frekvens[i] > 0)               // spring 0-forekomster over
-            std::cout << static_cast<char>('a' + i)
-                      << "        " << frekvens[i] << '\n';
+    std::cout << "\nBogstav  Antal\n";              // kolonne-overskrift
+    for (int i = 0; i < 26; ++i)                    // loop a(0)…z(25)
+    {
+        if (freq[i] > 0)                            // spring 0-forekomster over
+        {
+            char bogstav = static_cast<char>('a' + i); // i→bogstav
+            std::cout << bogstav << "        "      // juster mellemrum selv
+                      << freq[i] << '\n';           // udskriv optælling
+        }
+    }
 }
 
-/*************************************************************
- *  Hovedprogram
- *************************************************************/
-
+/********************  MAIN — programmet starter her  ********************/
 int main()
 {
-    /* -------------------------------------------------------
-       1) Læs en hel linje fra brugeren
-       ------------------------------------------------------- */
-    std::cout << "Indtast en tekstlinje:\n> ";
-    std::string tekst;
-    std::getline(std::cin, tekst);         // snup evt. mellemrum med
+    /* ---------- 1) INPUT  ---------------------------------------------------- */
+    std::cout << "Indtast en tekstlinje:\n> ";      // prompt til bruger
+    std::string tekst;                              // dynamisk streng-objekt
+    std::getline(std::cin, tekst);                  // læs fuld linje inkl. mellemrum
 
-    /* -------------------------------------------------------
-       2–3) Fjern mellemrum, gør småt og tæl forekomster
-       ------------------------------------------------------- */
-    int frekvens[26] = {0};                // array med 26 heltal, init. til 0
-    int bogstavTæller = 0;                 // samlet antal bogstaver
+    /* ---------- 2) INITIALISÉR TÆLLERE -------------------------------------- */
+    int freq[26] = {0};                             // 26 heltal sat til 0: indeks 0=a, 25=z
+    int total = 0;                                  // tæller alle gyldige bogstaver
 
-    for (size_t i = 0; i < tekst.size(); ++i)
+    /* ---------- 3) LØKKE: NORMALISÉR + TÆL ---------------------------------- */
+    for (size_t i = 0; i < tekst.size(); ++i)       // løb hele input-strengen igennem
     {
-        char ch = toLowerAZ(tekst[i]);     // gør lille hvis A-Z
+        char ch = toLowerAZ(tekst[i]);              // gør eventuelt stort → småt
 
-        // Er det nu et bogstav a-z?
-        if (ch >= 'a' && ch <= 'z')
+        if (ch >= 'a' && ch <= 'z')                 // accepter kun a-z
         {
-            ++frekvens[ch - 'a'];          // brug forskellen som indeks (0-25)
-            ++bogstavTæller;               // step samlet optælling
+            ++freq[ch - 'a'];                       // bump den rette kasse i arrayet
+            ++total;                                // bump samlet tæller
         }
     }
 
-    /* -------------------------------------------------------
-       4) Find mest brugte bogstav
-       ------------------------------------------------------- */
-    int maxIndeks = 0;                     // antag 'a' er mest brugt til at starte med
-    for (int i = 1; i < 26; ++i)
-        if (frekvens[i] > frekvens[maxIndeks])
-            maxIndeks = i;
+    /* ---------- 4) FIND MEST BRUGTE BOGSTAV --------------------------------- */
+    int maxIdx = 0;                                 // start med 'a' som foreløbig vinder
+    for (int i = 1; i < 26; ++i)                    // tjek resten af alfabetet
+        if (freq[i] > freq[maxIdx])                 // bedre kandidat?
+            maxIdx = i;                             // gem nyt indeks
 
-    /* -------------------------------------------------------
-       5) Udskriv resultater
-       ------------------------------------------------------- */
-    std::cout << "\nAntal bogstaver (uden mellemrum): " << bogstavTæller << '\n';
+    /* ---------- 5) OUTPUT TIL BRUGER --------------------------------------- */
+    std::cout << "\nAntal bogstaver (uden mellemrum): "
+              << total << '\n';                     // total tal
     std::cout << "Mest brugte bogstav: "
-              << static_cast<char>('a' + maxIndeks)
-              << " (" << frekvens[maxIndeks] << " gange)\n";
+              << static_cast<char>('a' + maxIdx)    // indeks → bogstav
+              << " (" << freq[maxIdx] << " gange)\n";
 
-    printFrequencies(frekvens);            // alfabetisk liste
+    printFrequencies(freq);                         // alfabetisk tabel (spring 0’er)
 
-    return 0;
+    return 0;                                       // alt OK
 }
